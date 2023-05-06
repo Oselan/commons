@@ -47,13 +47,10 @@ public class LookupAdminController  extends BaseLookupController{
 	
 	@Operation(summary = "Get Localized Lookup list by types")
 	@ResponseStatus(HttpStatus.OK)
-	@GetMapping("/list/{type}")
+	@GetMapping("/{type}/items")
 	public ResponseEntity<List<LookupLocalizedDTO>>  getLookups(@PathVariable(name = "type") String lookupType)
 			throws NotFoundException  {
 	    Map<String, List<? extends LookupDTO>> lookups = lookupService.getAllLookups(new String[]{lookupType});  
-		// lookups.entrySet().stream().forEach(entry->{
-		//     lookups.replace(entry.getKey(), translate(entry.getKey(), entry.getValue()));
-		// });
 	    //translate the returned list  
 	    List<LookupLocalizedDTO> lookupsLocalized = translate(lookupType, lookups.get(lookupType));
 		return new ResponseEntity<>(lookupsLocalized, HttpStatus.OK);

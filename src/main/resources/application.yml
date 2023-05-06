@@ -34,8 +34,8 @@ spring:
         order_inserts: true
         default_schema: jpalookups
         format_sql: true
-        ejb: 
-          interceptor: com.oselan.jpalookups.sample.HibernateInterceptor
+#        ejb: 
+#          interceptor: com.oselan.jpalookups.sample.HibernateInterceptor
   flyway:
     enabled: true
     fail-on-missing-locations: true

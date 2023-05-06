@@ -150,5 +150,5 @@ public interface ILookupService  {
 	 * Register lookup type enumerations adds the types to the list
 	 * @param lookupTypes
 	 */
-	void registerLookupType(ILookupTypeEnum<?>...lookupTypes);
+	void registerLookupTypes(ILookupTypeEnum<?>...lookupTypes);
 }

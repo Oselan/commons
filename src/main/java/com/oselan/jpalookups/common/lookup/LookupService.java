@@ -1,5 +1,6 @@
 package com.oselan.jpalookups.common.lookup;
 
+ 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,8 +12,6 @@ import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 
-import org.hibernate.boot.model.naming.Identifier;
-import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -35,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
  */ 
 @Slf4j
 @Service
-public class BaseLookupService implements ILookupService {
+public class LookupService implements ILookupService {
 
 	/**
 	 * Autoinject all jpa lookup repositories
@@ -54,7 +53,7 @@ public class BaseLookupService implements ILookupService {
 	protected List<ILookupTypeEnum<?>> lookupEnums = new ArrayList<ILookupTypeEnum<?>>(); 
 	
 	
-	public BaseLookupService() {
+	public LookupService() {
 		super();  
 	}
 	
@@ -63,7 +62,7 @@ public class BaseLookupService implements ILookupService {
 	 * @param lookupTypes
 	 */ 
 	@Override
-	public void registerLookupType(ILookupTypeEnum<?>...lookupTypes)
+	public void registerLookupTypes(ILookupTypeEnum<?>...lookupTypes)
 	{
 		lookupEnums.addAll(List.of(lookupTypes));
 	} 
@@ -99,7 +98,7 @@ public class BaseLookupService implements ILookupService {
 	 * @throws NotFoundException 
 	 */ 
 	@Override
-	public ILookupTypeEnum<?> getLookupTypeByName(String name) throws NotFoundException   {
+	public ILookupTypeEnum<?> getLookupTypeByName(String name) throws NotFoundException   { 
 		Optional<ILookupTypeEnum<?>> lookup = lookupEnums.stream().filter(lkEnum->lkEnum.name().equals(name)).findAny();
 		return lookup.orElseThrow(()->new NotFoundException("Lookup Type not found: " + name)) ;
 	}
@@ -130,8 +129,7 @@ public class BaseLookupService implements ILookupService {
 				log.error("Repository {} entity type not defined in lookup list enumeration and will not be preloaded",
 						repoName);
 				continue;
-			}
-		    
+			} 
 		}
 		log.info("Cached lookups ...");
 	}
