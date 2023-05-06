@@ -83,11 +83,22 @@ public class TranslationService extends AbstractMessageSource implements ITransl
 		 
 		Map<String, List<TranslationDTO>> translations = new HashMap<String, List<TranslationDTO>>();
 		for (Entry<String,String>  keyValue: keyDefaultValueMap.entrySet() )
-		{
+		{ 
 			List<Translation> transList = this.getTranslation(keyValue.getKey(), keyValue.getValue());
+			
 			List<TranslationDTO> transDTOlist = transList.stream()
 					.map(t->TranslationDTO.builder().value(t.getValue()).locale(t.getLocale()).build())
 					.collect(Collectors.toList());
+			//find any pending-to-save translations and add them to the list they will override the db ones
+			translationsToSave.stream().filter(t->t.getKey().equalsIgnoreCase(keyValue.getKey()))
+					.forEach(t->{
+						 TranslationDTO dto = transDTOlist.stream().filter(td->td.getLocale().equalsIgnoreCase(t.getLocale())).findAny().orElse(null); 
+						 if (dto!=null) 
+							 dto.setValue(t.getValue());
+						 else 
+							 transDTOlist.add(TranslationDTO.builder().locale(t.getLocale()).value(t.getValue()).build()); 
+					});
+		    
 			translations.put(keyValue.getKey(),transDTOlist);
 		}
 		return translations;
