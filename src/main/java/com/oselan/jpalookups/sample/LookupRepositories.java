@@ -2,7 +2,6 @@ package com.oselan.jpalookups.sample;
 
 
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 import com.oselan.jpalookups.common.lookup.BaseLookupRepository; 
 /***
@@ -13,7 +12,7 @@ import com.oselan.jpalookups.common.lookup.BaseLookupRepository;
 @Component
 public class LookupRepositories {
  
-	@Repository
+//	@Repository
 	public interface EntityLKRepository extends BaseLookupRepository<EntityLk> {
  
 	}
