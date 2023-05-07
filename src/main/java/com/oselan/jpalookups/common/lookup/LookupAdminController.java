@@ -77,10 +77,10 @@ public class LookupAdminController  extends BaseLookupController{
 	@Operation(summary = "Deprecates a Lookup item by id")
 	@ResponseStatus(HttpStatus.OK)
 	@DeleteMapping("/{type}/{id}")
-	public ResponseEntity<Void> deleteLookup (@PathVariable(name = "type") String lookupType,@PathVariable(name = "id") Long lookupId )
+	public ResponseEntity<Void> deprecateLookup (@PathVariable(name = "type") String lookupType,@PathVariable(name = "id") Long lookupId )
 			throws NotFoundException  {
 		ILookupTypeEnum<?> lookupTypeValue = lookupService.getLookupTypeByName(lookupType);
-		lookupService.deleteLookup(lookupTypeValue, lookupId);
+		lookupService.deprecateLookup(lookupTypeValue, lookupId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
