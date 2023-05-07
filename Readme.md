@@ -1,4 +1,7 @@
 # Getting Started
+This module provides a unified API for creating and managing application lookup tables.  
+It allows integrating read only enums to be retrieved using the same API. 
+It supports localization out of the box.  
 
 ### Features 
 
