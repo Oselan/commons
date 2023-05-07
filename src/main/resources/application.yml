@@ -33,9 +33,7 @@ spring:
         jdbc.batch_size: 100
         order_inserts: true
         default_schema: jpalookups
-        format_sql: true
-#        ejb: 
-#          interceptor: com.oselan.jpalookups.sample.HibernateInterceptor
+        format_sql: true 
   flyway:
     enabled: true
     fail-on-missing-locations: true
@@ -51,4 +49,6 @@ springdoc:
   swagger-ui:
     enabled: ${SWAGGER_UI_ENABLED:true}
     path: '/swagger-ui'
-  
+app:
+  lookups:
+    auto-create: true

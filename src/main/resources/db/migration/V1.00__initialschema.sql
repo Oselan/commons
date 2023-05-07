@@ -19,5 +19,4 @@ CREATE TABLE  IF NOT EXISTS  entity_lk (
 	deprecated boolean NULL DEFAULT false,
 	CONSTRAINT entity_lk_pk PRIMARY KEY (id),
 	CONSTRAINT entity_lk_un UNIQUE ("key")
-); 
- 
+);  

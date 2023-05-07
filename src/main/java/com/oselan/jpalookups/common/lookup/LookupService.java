@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,8 @@ public class LookupService implements ILookupService {
 	@Autowired
 	protected LookupMapper lookupMapper;
 
+	@Value( "${app.lookups.auto-create}" )
+	private Boolean autoCreate;
   
 	protected ConcurrentHashMap<ILookupTypeEnum<?>, BaseLookupRepository<? extends BaseLookupEntity>> repoMap = new ConcurrentHashMap<>();
 	
@@ -120,8 +123,8 @@ public class LookupService implements ILookupService {
 					log.info("Adding repository for entity {} to repository map: ", lookupListKey.name());
 					repoMap.put(lookupListKey, lklistEntry.getValue());
 					//table creation doesn't work because native queries #{#entityName} doesn't get mapped to physical name.
- 
-					lklistEntry.getValue().createTable(); 
+					if (Boolean.TRUE.compareTo(autoCreate)==0 )
+						lklistEntry.getValue().createTable(); 
 				}
 				 // do first initial call to fill the cache
 				lklistEntry.getValue().findAll();
