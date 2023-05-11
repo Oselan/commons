@@ -1,6 +1,6 @@
 package com.oselan.jpalookups.lookup_sample;
 
-import com.oselan.common.lookup.ILookupEnum;
+import com.oselan.commons.lookup.ILookupEnum;
 
 import lombok.Getter; 
 /***

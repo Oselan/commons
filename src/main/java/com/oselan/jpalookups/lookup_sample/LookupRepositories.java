@@ -3,7 +3,7 @@ package com.oselan.jpalookups.lookup_sample;
 
 import org.springframework.stereotype.Component;
 
-import com.oselan.common.lookup.BaseLookupRepository; 
+import com.oselan.commons.lookup.BaseLookupRepository; 
 /***
  * Wrapper class to group all definitions of lookup repositories.
  * @author Ahmad Hamid

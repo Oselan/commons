@@ -1,8 +1,8 @@
 package com.oselan.jpalookups.lookup_sample;
 
-import com.oselan.common.lookup.ILookup;
-import com.oselan.common.lookup.ILookupEnum;
-import com.oselan.common.lookup.ILookupTypeEnum;
+import com.oselan.commons.lookup.ILookup;
+import com.oselan.commons.lookup.ILookupEnum;
+import com.oselan.commons.lookup.ILookupTypeEnum;
 
 import lombok.Getter;
 /***

@@ -2,7 +2,7 @@ package com.oselan.jpalookups.lookup_sample;
 
 import org.springframework.context.annotation.Configuration;
 
-import com.oselan.common.lookup.ILookupService;
+import com.oselan.commons.lookup.ILookupService;
 
  
 @Configuration

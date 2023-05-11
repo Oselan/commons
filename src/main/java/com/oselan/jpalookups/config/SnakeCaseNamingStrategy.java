@@ -5,15 +5,13 @@ import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 import org.springframework.context.annotation.Configuration;
 
-import lombok.extern.slf4j.Slf4j;
-
 /***
  * Maps names to database snake case naming and quotes identifiers
  * @author Ahmad Hamid
  *
  */
 @Configuration
-@Slf4j
+//@Slf4j
 public class SnakeCaseNamingStrategy   implements PhysicalNamingStrategy  {
  
 
@@ -51,7 +49,7 @@ public class SnakeCaseNamingStrategy   implements PhysicalNamingStrategy  {
         .toLowerCase();
       
       Identifier   id =  Identifier.toIdentifier(newName,  identifier.isQuoted());
-      log.info("Translated identifier {}",id);
+//      log.info("Translated identifier {}",id);
       return id;
   }
  

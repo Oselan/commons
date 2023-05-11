@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.oselan.common.lookup.BaseLookupEntity;
+import com.oselan.commons.lookup.BaseLookupEntity;
 
 import lombok.Builder;
 import lombok.Getter;
