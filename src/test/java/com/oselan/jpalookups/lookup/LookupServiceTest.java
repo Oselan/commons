@@ -24,16 +24,16 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import com.oselan.jpalookups.common.exceptions.ConflictException;
-import com.oselan.jpalookups.common.exceptions.NotFoundException;
-import com.oselan.jpalookups.common.lookup.ILookup;
-import com.oselan.jpalookups.common.lookup.ILookupService;
-import com.oselan.jpalookups.common.lookup.LookupDTO;
-import com.oselan.jpalookups.common.lookup.LookupMapper;
-import com.oselan.jpalookups.common.lookup.LookupSimpleDTO;
-import com.oselan.jpalookups.sample.EntityLk;
-import com.oselan.jpalookups.sample.EnumLk;
-import com.oselan.jpalookups.sample.LookupType;
+import com.oselan.common.exceptions.ConflictException;
+import com.oselan.common.exceptions.NotFoundException;
+import com.oselan.common.lookup.ILookup;
+import com.oselan.common.lookup.ILookupService;
+import com.oselan.common.lookup.LookupDTO;
+import com.oselan.common.lookup.LookupMapper;
+import com.oselan.common.lookup.LookupSimpleDTO;
+import com.oselan.jpalookups.lookup_sample.EntityLk;
+import com.oselan.jpalookups.lookup_sample.EnumLk;
+import com.oselan.jpalookups.lookup_sample.LookupType;
 
 import lombok.SneakyThrows;
 

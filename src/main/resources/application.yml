@@ -50,5 +50,7 @@ springdoc:
     enabled: ${SWAGGER_UI_ENABLED:true}
     path: '/swagger-ui'
 app:
+  localization:
+    auto-create: true 
   lookups:
     auto-create: true

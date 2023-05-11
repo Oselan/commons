@@ -10,9 +10,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * @author Ahmad Hamid
  *
  */
-@SpringBootApplication 
-@EntityScan
-@EnableJpaRepositories(considerNestedRepositories = true) 
+@SpringBootApplication (scanBasePackages ={"com.oselan"} )
+@EntityScan(basePackages = {"com.oselan"})
+@EnableJpaRepositories(basePackages = {"com.oselan"} ,considerNestedRepositories = true) 
 public class JpaLookupsApplication {
 
 	public static void main(String[] args) {
