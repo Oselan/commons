@@ -35,6 +35,26 @@ public abstract class LookupMapper {
 	@Mapping(target = "values", ignore = true)
 	public abstract LookupLocalizedDTO toLocalizedDTO( LookupDTO lookup );
 	
+	/***
+	 * Helper methods to loose any subclass properties
+	 * @param lookup
+	 * @return
+	 */
+	public LookupSimpleDTO toDTOSimple(BaseLookupEntity lookup)  
+	{ 
+	  LookupDTO lk = toDTO(lookup);
+      return  lk != null? lk.explicitUpCast() : null;
+	}
+	/***
+     * Helper methods to loose any subclass properties
+     * @param lookup
+     * @return
+     */
+	public LookupSimpleDTO toDTOSimple(ILookupEnum<?> lookup)  
+    { 
+        return toDTO(lookup).explicitUpCast();
+    }
+	
 	
 	/***
 	 * Maps a Lookup enum or a database driven lookup to LookupDTO 
@@ -51,11 +71,11 @@ public abstract class LookupMapper {
 		   if (lookup instanceof ILookupEnum )
 		   {
 			   lookupDTO = LookupDTO.builder().key(lookup.getKey())
-					   .value(lookup.getValue()).build(); 
+					   .value(lookup.getValue()).order(lookup.getOrder()).id(lookup.getId()).build(); 
 		   }
 		   else if (lookup != null && lookup instanceof HibernateProxy  && ((HibernateProxy)lookup).getHibernateLazyInitializer().isUninitialized())
 		   {
-				   //load the lookupdto from the service
+				   //automatically load the cached lookupdto from hibernate 
 				   try {
 					   LazyInitializer initializer = ((HibernateProxy)lookup).getHibernateLazyInitializer() ;  
 					   @SuppressWarnings("unchecked")
@@ -82,6 +102,7 @@ public abstract class LookupMapper {
     }
     
 	  
+	  
 	/***
 	 * Maps a DTO to an enum of type ILookupEnum
 	 * @param <X>
@@ -104,13 +125,14 @@ public abstract class LookupMapper {
     	{
     		entity =  entityManager.find( entityClass, sourceDto.getId() );
     		if (sourceDto instanceof LookupDTO)
-    			dtoToEntity((LookupDTO)sourceDto,entity);
+    			dtoToEntity((LookupDTO) sourceDto,entity);
     	}
     	else 
     	{
     		try {//used when creating new dto entities
 			    entity  = entityClass.getDeclaredConstructor().newInstance();
-			    dtoToEntity((LookupDTO)sourceDto,entity);
+			    if (sourceDto instanceof LookupDTO)
+			      dtoToEntity((LookupDTO)  sourceDto,entity);
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				throw new IllegalAccessException("Failed to instantiate entity {" + entityClass.getName() + "}") ; 

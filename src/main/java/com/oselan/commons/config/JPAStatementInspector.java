@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration 
-//@ConditionalOnProperty( name = {"app.lookups.auto-create","app.localization.auto-create"})
 @ConditionalOnExpression("${app.lookups.auto-create:true} || ${app.localization.auto-create:true}")
 public class JPAStatementInspector implements StatementInspector {
 	 

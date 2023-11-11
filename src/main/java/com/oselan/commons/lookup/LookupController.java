@@ -21,25 +21,23 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "Lookups", description = "Lookup list types and lookup lists") 
-@RestController
-@RequestMapping("/v1/lookups")
+@Tag(name = "Lookups API", description = "Lookup list types and lookup lists")   
 @Validated  
 public class LookupController extends BaseLookupController{
 	
 	@Operation(summary = "Get all the lookup types available in the system")
 	@ResponseStatus(HttpStatus.OK)
 	@GetMapping("/types")
-	@Parameter(name = "Accept-Language", in = ParameterIn.HEADER, description = "Language of user", required = false, examples = {
+	@Parameter(name = "Accept-Language", in = ParameterIn.HEADER,  description = "Language of user", required = false, examples = {
 			@ExampleObject(name = "English", value = "en"),
 			@ExampleObject(name = "Arabic", value = "ar") })
-	public ResponseEntity<Map<String, String>> getLookupTypes() throws NotFoundException {
-		Map<String, String> lookupTypes = lookupService.getLookupTypes();
+	public List<LookupTypeDTO> getLookupTypes() throws NotFoundException {
+	    List<LookupTypeDTO> lookupTypes = lookupService.getLookupTypes();
 		//only localize description
-		for (Entry<String, String> lookupType : lookupTypes.entrySet()) {
-			lookupTypes.replace(lookupType.getKey(), translationService.getMessage(lookupType.getKey()+".description" , lookupType.getValue())) ;
+		for (LookupTypeDTO lookupType : lookupTypes ) {
+			lookupType.setDescription( localizationService.getMessage(lookupType.getName() +".description" , lookupType.getDescription())) ;
 		} 
-		return new ResponseEntity<Map<String, String>>(lookupTypes, HttpStatus.OK);
+		return  lookupTypes ;
 	}
 
 	@Parameter(name = "Accept-Language", in = ParameterIn.HEADER, description = "Language of user", required = false, examples = {
@@ -50,7 +48,7 @@ public class LookupController extends BaseLookupController{
 	@GetMapping( )
 	public ResponseEntity<Map<String, List<? extends LookupDTO>>> getPublicLookups(@RequestParam(name = "types") String[] lookupTypeArray)
 			throws NotFoundException  {
-		Map<String, List<? extends LookupDTO>> lookups = lookupService.getPublicLookups(lookupTypeArray);
+		Map<String, List<? extends LookupDTO>> lookups = lookupService.getPublicLookups(lookupTypeArray,true);
 		//translate the lookups
 		lookups.entrySet().stream().forEach(
 				t->translate(t.getKey(),t.getValue().toArray(new LookupDTO[t.getValue().size()])));

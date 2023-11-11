@@ -2,6 +2,8 @@ package com.oselan.commons.dto;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,13 +13,14 @@ import lombok.experimental.SuperBuilder;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonPropertyOrder(value = {"id","name"} ,alphabetic = true)
 public class SimpleIdNameDTO implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -8338006490500757200L;
-	public Long id;
-	public String name;
+	protected Long id;
+	protected String name;
 
  
 	@Override

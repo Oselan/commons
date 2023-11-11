@@ -21,4 +21,9 @@ public class LookupDTO extends LookupSimpleDTO {
     protected Integer order;
     @Builder.Default
     protected Boolean deprecated=Boolean.FALSE;
+    
+    public LookupSimpleDTO explicitUpCast() {
+      return LookupSimpleDTO.builder().id(this.id).key(key).value(value).build(); 
+    }
+    
 }

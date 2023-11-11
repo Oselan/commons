@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.oselan.commons.translation.ITranslationService;
+import com.oselan.commons.localization.ILocalizationService;
   
 public class BaseLookupController {
 	
@@ -14,7 +14,7 @@ public class BaseLookupController {
 	protected ILookupService lookupService;
 	
 	@Autowired
-	protected ITranslationService translationService;
+	protected ILocalizationService localizationService;
   
 	/***
 	 * Translates the lookupDTO based on the current context language.
@@ -24,7 +24,7 @@ public class BaseLookupController {
 	protected void translate(String typeKey, LookupDTO ... dtos)
 	{ 
 		Arrays.stream(dtos).filter(dto->dto!=null)
-		.forEach(dto->dto.setValue(translationService.getMessage(tolocaleKey(typeKey, dto.getKey()),dto.getValue())));  
+		.forEach(dto->dto.setValue(localizationService.getMessage(tolocaleKey(typeKey, dto.getKey()),dto.getValue())));  
 	}
 	
 	/**

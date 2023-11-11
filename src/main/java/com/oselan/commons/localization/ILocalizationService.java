@@ -1,33 +1,33 @@
-package com.oselan.commons.translation;
+package com.oselan.commons.localization;
 
 import java.util.List;
 import java.util.Map;
 
 /***
- * Handles translation operations and managing database driven service
+ * Handles localization operations and managing database driven service
  * @author Ahmad Hamid 
  */
-public interface ITranslationService {
+public interface ILocalizationService {
 
 	/***
-	 * Queues key/value to be saved in translation message source using the locale context.
+	 * Queues key/value to be saved in localization message source using the locale context.
 	 * @param key
 	 * @param value
 	 */
 	void setMessage(String key, String value);
 
 	/***
-	 * Queues a set of Keys/Values to be saved in translation into message source  using the locale context.
+	 * Queues a set of Keys/Values to be saved in localization into message source  using the locale context.
 	 * @param keyValueMap
 	 */
 //	void setMessages(Map<String, String> keyValueMap);
 	
 	
 	/***
-	 * Queues a list of key-translations for saving into the message source 
-	 * @param keyTranslationsMap
+	 * Queues a list of key-localizations for saving into the message source 
+	 * @param keyLocalizationsMap
 	 */
-	void setMessages(Map<String,List<TranslationDTO>> keyTranslationsMap);
+	void setMessages(Map<String,List<LocalizationDTO>> keyLocalizationsMap);
 	
 	/***
 	 * Helper method alternative to the messageSource getMessage that automatically reads the locale from context 
@@ -48,10 +48,10 @@ public interface ITranslationService {
 	String getMessage(String key, String defaultValue);
 
 	/***
-	 * Given a list of keys , returns a map of keys and translations available for that key.
+	 * Given a list of keys , returns a map of keys and localizations available for that key.
 	 * @param keys
 	 * @return
 	 */
-	Map<String,List<TranslationDTO>> getMessages(Map<String,String> keyDefaultValueMap);
+	Map<String,List<LocalizationDTO>> getMessages(Map<String,String> keyDefaultValueMap);
 
 }

@@ -1,8 +1,10 @@
 package com.oselan.commons.lookup;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import com.oselan.commons.entity.BaseIdEntity;
 
 import lombok.Getter;
@@ -22,11 +24,13 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@Cacheable
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public abstract class BaseLookupEntity extends  BaseIdEntity implements ILookup {
     
-    private String key;
-    private String value;
+    protected String key;
+    protected String value;
     @Column(name="\"order\"")
-    private Integer order;
-    private boolean deprecated;
+    protected Integer order;
+    protected boolean deprecated;
 }

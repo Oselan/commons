@@ -7,7 +7,7 @@ public abstract class BaseException extends Exception implements BusinessExcepti
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String errorCode = UNDEFINED_ERROR;
+	protected String errorCode = UNDEFINED_ERROR;
 
  
 	public BaseException() {
@@ -22,9 +22,17 @@ public abstract class BaseException extends Exception implements BusinessExcepti
 		super(message);
 	}
 
-	public BaseException(Throwable cause) {
-		super(cause);
+    public BaseException(String message,String errorCode, Throwable cause) {
+        super(message, cause);
+        this.errorCode = errorCode;
+    }
+  
+    public BaseException(String message,String errorCode) {
+        super(message);
+        this.errorCode = errorCode;
 	} 
+ 
+     
  
 	public String getErrorCode() {
 		return errorCode;

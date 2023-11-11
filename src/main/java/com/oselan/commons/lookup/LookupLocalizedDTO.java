@@ -3,7 +3,7 @@ package com.oselan.commons.lookup;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.oselan.commons.translation.TranslationDTO;
+import com.oselan.commons.localization.LocalizationDTO;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,7 +21,7 @@ public class LookupLocalizedDTO extends LookupDTO {
 
     private static final long serialVersionUID = 3339776955244716802L;
     
-    protected List<TranslationDTO> values;
+    protected List<LocalizationDTO> values;
     
     
 }

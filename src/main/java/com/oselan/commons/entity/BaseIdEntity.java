@@ -10,13 +10,12 @@ import lombok.SneakyThrows;
  
 
 @MappedSuperclass 
-public abstract class BaseIdEntity  extends BaseEntity implements Cloneable {
+public abstract class BaseIdEntity  extends BaseEntity implements Cloneable,IdEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-
+    @GeneratedValue(strategy = GenerationType.IDENTITY) 
     @Column(name = "id")
-    private Long id;
+    protected Long id;
 
     public Long getId() {
         return id;

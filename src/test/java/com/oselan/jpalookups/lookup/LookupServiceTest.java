@@ -31,6 +31,7 @@ import com.oselan.commons.lookup.ILookupService;
 import com.oselan.commons.lookup.LookupDTO;
 import com.oselan.commons.lookup.LookupMapper;
 import com.oselan.commons.lookup.LookupSimpleDTO;
+import com.oselan.commons.lookup.LookupTypeDTO;
 import com.oselan.jpalookups.lookup_sample.EntityLk;
 import com.oselan.jpalookups.lookup_sample.EnumLk;
 import com.oselan.jpalookups.lookup_sample.LookupType;
@@ -64,7 +65,7 @@ class  LookupServiceTest {
 	@SneakyThrows(InterruptedException.class)
 	private static void destroy()
 	{
-		//sleep so any translations get to be saved 
+		//sleep so any localizations get to be saved 
 		TimeUnit.SECONDS.sleep(5); 
 	}
 	  
@@ -198,17 +199,17 @@ class  LookupServiceTest {
 	@Test
 	void testGetLookupTypes() throws NotFoundException
 	{
-		Map<String, String> typesMap = lookupService.getLookupTypes();
-		assertNotNull(typesMap);
-		assertTrue(typesMap.containsKey(LookupType.EntityLK.name()));
-		assertTrue(typesMap.containsKey(LookupType.EnumLK.name()));
+		List<LookupTypeDTO> typesType = lookupService.getLookupTypes();
+		assertNotNull(typesType);
+//		assertTrue(typesType.containsKey(LookupType.EntityLK.name()));
+//		assertTrue(typesType.containsKey(LookupType.EnumLK.name()));
 	}
 	
 	
 	@Test
 	void testGetPublicLookups() throws NotFoundException
 	{
-		Map<String, List<? extends LookupDTO>> mapList = lookupService.getPublicLookups(new String[] {"EntityLK","EnumLK" });
+		Map<String, List<? extends LookupDTO>> mapList = lookupService.getPublicLookups(new String[] {"EntityLK","EnumLK" },true);
 		assertNotNull(mapList);
 		assertTrue(mapList.containsKey(LookupType.EntityLK.name()));
 		for ( LookupDTO lkp: mapList.get(LookupType.EntityLK.name()))

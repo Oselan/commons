@@ -17,7 +17,10 @@ public  interface ILookupTypeEnum<T extends Enum<T>>    {
 	 * or false if it is database driven lookup
 	 * @return
 	 */
-	public boolean isEnum();
+	public default boolean isEnum()
+	{
+		 return ILookupEnum.class.isAssignableFrom(getLookupClass());
+	}
 	
 	/***
 	 * The lookup enumeration class which is an enum that extends IlookupEnum

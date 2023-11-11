@@ -98,7 +98,7 @@ public interface ILookupService  {
      * @return
      * @throws NotFoundException
      */
-    Map<String, String> getLookupTypes() throws NotFoundException;
+    List<LookupTypeDTO> getLookupTypes() throws NotFoundException;
 
     /***
      * Returns the list of lookup list except for deprecated values
@@ -106,7 +106,7 @@ public interface ILookupService  {
      * @return
      * @throws NotFoundException 
      */
-    Map<String, List<? extends LookupDTO>> getPublicLookups(String[] lookupTypeArray) throws NotFoundException;
+    Map<String, List<? extends LookupDTO>> getPublicLookups(String[] lookupTypeArray, boolean sortAlphabetically) throws NotFoundException;
 
     /***
      * Returns the list of all lookup lists 

@@ -12,7 +12,7 @@
 	<artifactId>JPALookups</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>JPALookups</name>
+	<name>Commons</name>
 	<description>Lookup Enum/Table handling in  Spring Boot/JPA/Hibernate</description>
 	<properties>
 		<java.version>11</java.version>
@@ -52,8 +52,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency> 
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-mail</artifactId> 
 		</dependency>
-		
+
 		<!-- Caching -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

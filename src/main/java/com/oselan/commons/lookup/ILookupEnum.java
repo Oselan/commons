@@ -25,7 +25,7 @@ public  interface ILookupEnum<T extends Enum<T>> extends ILookup {
 	}
 	
 	default Long getId() {
-		return Long.valueOf(getOrder());
+		return Long.valueOf(ordinal());
 	}
 	
 	default String getKey()

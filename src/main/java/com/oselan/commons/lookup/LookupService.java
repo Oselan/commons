@@ -10,13 +10,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.oselan.commons.exceptions.ConflictException;
 import com.oselan.commons.exceptions.NotFoundException;
@@ -48,7 +47,7 @@ public class LookupService implements ILookupService {
 	@Autowired
 	protected LookupMapper lookupMapper;
 
-	@Value( "${app.lookups.auto-create}" )
+	@Value( "${app.lookups.auto-create:false}" )
 	private Boolean autoCreate;
   
 	protected ConcurrentHashMap<ILookupTypeEnum<?>, BaseLookupRepository<? extends BaseLookupEntity>> repoMap = new ConcurrentHashMap<>();
@@ -61,6 +60,41 @@ public class LookupService implements ILookupService {
 	}
 	
 	/***
+   * Initialize repository map and cache lookups on app startup
+   */
+  @EventListener(ApplicationReadyEvent.class)
+  @Transactional(rollbackFor = Exception.class)
+  protected void initializeLookupsOnSystemStart() {
+  
+  	log.info("Caching lookups ...");
+  	for (Map.Entry<String, BaseLookupRepository<? extends BaseLookupEntity>> lklistEntry : lkRepositories.entrySet()) {
+  		String repoName = lklistEntry.getKey();
+  		String entityName = repoName.replaceAll(".*\\.(.*?)Repository", "$1");
+  		try { 
+   			ILookupTypeEnum<?>  lookupListKey = getLookupTypeByName(entityName);
+  			if (!repoMap.containsKey(lookupListKey)) {
+  				log.info("Adding repository for entity {} to repository map: ", lookupListKey.name());
+  				repoMap.put(lookupListKey, lklistEntry.getValue());  
+  			}
+  			if (Boolean.TRUE.compareTo(autoCreate)==0 )
+                lklistEntry.getValue().createTable();  
+  			// do first initial call to fill the cache
+  			try { 
+  			  lklistEntry.getValue().findAll();
+  			}catch (RuntimeException e) { 
+                 log.error("Define property app.lookups.auto-create=true to auto create " + entityName + " table.");
+                 //  throw e; //allow application startup to proceed
+              }
+  		}catch (NotFoundException e) {
+  			log.error("Repository {} entity type not defined in lookup list enumeration and will not be preloaded",
+  					repoName);
+  			continue;
+  		} 
+  	}
+  	log.info("Cached lookups ...");
+  }
+
+  /***
 	 * Register lookup type enumerations adds the types to the list
 	 * @param lookupTypes
 	 */ 
@@ -107,38 +141,6 @@ public class LookupService implements ILookupService {
 	}
 	
 	
-	/***
-	 * Initialize repository map and cache lookups on app startup
-	 */
-	@EventListener(ApplicationReadyEvent.class)
-	protected void initializeLookupsOnSystemStart() {
- 
-		log.info("Caching lookups ...");
-		for (Map.Entry<String, BaseLookupRepository<? extends BaseLookupEntity>> lklistEntry : lkRepositories.entrySet()) {
-			String repoName = lklistEntry.getKey();
-			String entityName = repoName.replaceAll(".*\\.(.*?)Repository", "$1");
-			try { 
-     			ILookupTypeEnum<?>  lookupListKey = getLookupTypeByName(entityName);
-				if (!repoMap.containsKey(lookupListKey)) {
-					log.info("Adding repository for entity {} to repository map: ", lookupListKey.name());
-					repoMap.put(lookupListKey, lklistEntry.getValue());
-					//table creation doesn't work because native queries #{#entityName} doesn't get mapped to physical name.
-					if (Boolean.TRUE.compareTo(autoCreate)==0 )
-						lklistEntry.getValue().createTable(); 
-					else 
-			        	log.info("Define property app.lookups.auto-create=true to auto create " + entityName + " table.");
-				}
-				 // do first initial call to fill the cache
-				lklistEntry.getValue().findAll();
-			}catch (NotFoundException e) {
-				log.error("Repository {} entity type not defined in lookup list enumeration and will not be preloaded",
-						repoName);
-				continue;
-			} 
-		}
-		log.info("Cached lookups ...");
-	}
-
 	private Integer lookupOrderIncrement(ILookupTypeEnum<?> lookupType) throws NotFoundException {
 		Integer maxOrder = 0;
 		var repo = repoMap.get(lookupType);
@@ -151,7 +153,7 @@ public class LookupService implements ILookupService {
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	@Transactional 
+	@Transactional(rollbackFor = Exception.class) 
 	public  <T extends BaseLookupEntity,D extends LookupDTO> List<D> saveLookups(ILookupTypeEnum<?> lookupType, List<D> lookupDTOs)
 			throws NotFoundException {
 		log.info("Saving list of {} lookups for {}",lookupDTOs.size() ,lookupType);
@@ -160,7 +162,7 @@ public class LookupService implements ILookupService {
 		if (repo == null)
 			throw new NotFoundException("Lookup list " + lookupType + " repository not found");
 		 
-		List<T> lookupList = lookupDTOs.stream().map(dto->{ 
+		List<T> lookupList = lookupDTOs.stream().filter(dto->dto.getKey()!=null && dto.getValue()!=null).map(dto->{ 
 		   T blk = lookupMapper.toEntity(dto,(Class<T>) lookupType.getLookupClass()); 
 		   return blk;
 		}).collect(Collectors.toList()); 
@@ -171,7 +173,7 @@ public class LookupService implements ILookupService {
 	}
 	 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public <T extends BaseLookupEntity> void deprecateLookup(ILookupTypeEnum<?> lookupType, Long lookupId) throws NotFoundException {
 		log.info("Delete lookup Id {} for type {}", lookupId ,lookupType);
 		@SuppressWarnings("unchecked")
@@ -186,7 +188,7 @@ public class LookupService implements ILookupService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public <T extends BaseLookupEntity> void deleteLookup(ILookupTypeEnum<?> lookupType, Long lookupId) throws NotFoundException {
 		log.info("Delete lookup Id {} for type {}", lookupId ,lookupType);
 		@SuppressWarnings("unchecked")
@@ -200,7 +202,7 @@ public class LookupService implements ILookupService {
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public <T extends BaseLookupEntity> void deleteAllLookup(ILookupTypeEnum<?> lookupType ) throws NotFoundException {
 		log.info("Delete all lookup values for type {}", lookupType);
 		@SuppressWarnings("unchecked")
@@ -214,7 +216,7 @@ public class LookupService implements ILookupService {
 
 
 	@SuppressWarnings("unchecked")
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public  <T extends BaseLookupEntity> LookupDTO saveLookup(ILookupTypeEnum<?> lookupType, LookupDTO lookupDTO)
 			throws NotFoundException, ConflictException {
@@ -245,16 +247,18 @@ public class LookupService implements ILookupService {
 	}
 
 	@Override
-	public Map<String, String> getLookupTypes() {
-		Map<String, String> keyMap = new HashMap<>();
+	public List<LookupTypeDTO> getLookupTypes() {
+	    
+	    List<LookupTypeDTO> lookupTypeList = new ArrayList<>();
 		for (ILookupTypeEnum<?> lookupType : getLookupTypeValues()) {
-			keyMap.put(lookupType.name(),lookupType.getDescription());
+		  lookupTypeList.add(LookupTypeDTO.builder().name(lookupType.name()).description(lookupType.getDescription())
+		      .isReadOnly(lookupType.isEnum()).build());
 		}
-		return keyMap;
+		return lookupTypeList;
 	}
 
 	@Override
-	public Map<String, List<? extends LookupDTO>> getPublicLookups(String[] lookupTypeArray) throws NotFoundException {
+	public Map<String, List<? extends LookupDTO>> getPublicLookups(String[] lookupTypeArray, boolean sortAlphabetically) throws NotFoundException {
 		Map<String, List<? extends LookupDTO>> lookupListMap = new HashMap<>();
 		for (String lookupTypeName : lookupTypeArray) {
 			ILookupTypeEnum<?> lookupType = getLookupTypeByName(lookupTypeName) ;
@@ -262,7 +266,14 @@ public class LookupService implements ILookupService {
 				BaseLookupRepository<? extends BaseLookupEntity> repo = repoMap.get(lookupType);
 				if (repo != null) {
 					List<LookupDTO> lookupDTOS = lookupMapper.toDTOList(
-							repo.findAll().stream().filter(lkp -> !lkp.isDeprecated()).collect(Collectors.toList()));
+							repo.findAll().stream().filter(lkp -> !lkp.isDeprecated())
+							    .sorted((lk1,lk2)->{
+							         if (sortAlphabetically) 
+							             return lk1.getValue().compareTo(lk2.getValue());
+							         else 
+							             return lk1.getOrder().compareTo(lk2.getOrder());
+							      }
+							    ).collect(Collectors.toList()));
 					lookupListMap.put(lookupTypeName, lookupDTOS);
 				}
 			} else if (lookupType.getLookupClass() != null) {

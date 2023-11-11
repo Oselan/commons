@@ -14,19 +14,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.oselan.commons.exceptions.NotFoundException;
-import com.oselan.commons.translation.TranslationDTO;
+import com.oselan.commons.localization.LocalizationDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "Lookups Management", description = "Lookup lists Management") 
-@RestController
-@RequestMapping(value = {"/v1/admin/lookups"})
+
+@Tag(name = "Lookups Admin API", description = "Lookup lists Management") 
 @Validated  
 public class LookupAdminController  extends BaseLookupController{
 	  
@@ -65,9 +62,9 @@ public class LookupAdminController  extends BaseLookupController{
 			throws NotFoundException  {
 		ILookupTypeEnum<?> lookupTypeValue = lookupService.getLookupTypeByName(lookupType);
 		List<LookupLocalizedDTO> lookupsLocalized = lookupService.saveLookups(lookupTypeValue, dtoList);
-		Map<String,List<TranslationDTO>> keyTransMap = new HashMap<String, List<TranslationDTO>>();
+		Map<String,List<LocalizationDTO>> keyTransMap = new HashMap<String, List<LocalizationDTO>>();
 		dtoList.forEach(ldto-> keyTransMap.put(tolocaleKey(lookupType, ldto.getKey()) , ldto.getValues()));
-		translationService.setMessages(keyTransMap);
+		localizationService.setMessages(keyTransMap);
 		lookupsLocalized = translate(lookupType, lookupsLocalized) ; 
 		return new ResponseEntity<List<LookupLocalizedDTO>>(lookupsLocalized, HttpStatus.OK);
 	}
@@ -94,9 +91,9 @@ public class LookupAdminController  extends BaseLookupController{
 		//convert the dtos list to a key/defaultValue map.
 		Map<String,String> localeKeyValueMap = dtos.stream() //.map(dto->tolocaleKey(typeKey,dto.getKey()))
 				                       .collect(Collectors.toMap(dto->tolocaleKey(typeKey,dto.getKey()),LookupDTO::getValue));
-		final Map<String, List<TranslationDTO>> keyTranslationMap = translationService.getMessages(localeKeyValueMap); 
+		final Map<String, List<LocalizationDTO>> keyTranslationMap = localizationService.getMessages(localeKeyValueMap); 
 		List<LookupLocalizedDTO> localdtoList = dtos.stream().map(dto->
-		{   //cast to localizeddto and fetch the translations from the keytranslationMap
+		{   //cast to localizeddto and fetch the localization from the keytranslationMap
 			LookupLocalizedDTO ldto = lookupMapper.toLocalizedDTO(dto);
 			ldto.setValues(keyTranslationMap.get(tolocaleKey(typeKey,dto.getKey())));
 			return ldto;

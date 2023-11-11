@@ -1,5 +1,6 @@
-package com.oselan.commons.translation;
+package com.oselan.commons.localization;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode( ) 
 @Builder
-public class TranslationDTO {  
+public class LocalizationDTO {  
+  
+     @Schema(allowableValues = {"en","ar","fr"},defaultValue = "en")
 	 private String locale;
 	 private String value;
 }
